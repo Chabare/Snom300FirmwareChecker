@@ -45,7 +45,6 @@ func getFirmwareAndRollup(html string) ([]string, []string) {
 }
 
 func getFirmwareLink(html string) string {
-	ioutil.WriteFile("a.html", []byte(html), 0644)
 	matches := regexp.MustCompile("http://downloads\\.snom\\.com/fw/snom300-[0-9.]+-SIP-f.bin").FindAllStringSubmatch(html, 10)
 	if len(matches) == 0 {
 		return ""
@@ -55,7 +54,6 @@ func getFirmwareLink(html string) string {
 }
 
 func getRollupLink(html string) string {
-	ioutil.WriteFile("a.html", []byte(html), 0644)
 	matches := regexp.MustCompile("http://downloads\\.snom\\.com/fw/mru-preview/snom300-[0-9.]+-SIP-f.bin").FindAllStringSubmatch(html, 10)
 	if len(matches) == 0 {
 		return ""

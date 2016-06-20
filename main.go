@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os/user"
@@ -9,7 +10,10 @@ import (
 	"strings"
 )
 
+var force = flag.Bool("force", false, "Force the download.")
+
 func main() {
+	flag.Parse()
 	curr := readCurrent()
 	oldFirmwareNumber, oldRollupNumber := curr[0], curr[1]
 
@@ -19,7 +23,7 @@ func main() {
 	firmware, rollup := getFirmwareAndRollup(html)
 	firmwareSiteLink, firmwareNumber := baseURL+firmware[0], firmware[1]
 	fmt.Printf("Firmware number: %s ", firmwareNumber)
-	if firmwareNumber != oldFirmwareNumber {
+	if firmwareNumber != oldFirmwareNumber || *force {
 		fmt.Printf("(new)")
 		link := getFirmwareLink(string(establishConnection(firmwareSiteLink)))
 		ioutil.WriteFile(firmwareNumber+".bin", establishConnection(link), 0644)
@@ -30,7 +34,7 @@ func main() {
 
 	rollupSiteLink, rollupNumber := baseURL+rollup[0], rollup[1]
 	fmt.Printf("Rollup number: %s ", rollupNumber)
-	if rollupNumber != oldRollupNumber {
+	if rollupNumber != oldRollupNumber || *force {
 		fmt.Printf("(new)")
 		link := getRollupLink(string(establishConnection(rollupSiteLink)))
 		ioutil.WriteFile(rollupNumber+".bin", establishConnection(link), 0644)

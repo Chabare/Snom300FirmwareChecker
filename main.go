@@ -14,6 +14,9 @@ var force = flag.Bool("force", false, "Force the download.")
 func main() {
 	flag.Parse()
 	rollbar.SetToken(readToken("token"))
+	if *force {
+		rollbar.Message(rollbar.WARN, "Forcing download.")
+	}
 
 	curr := readCurrent()
 	oldFirmwareNumber, oldRollupNumber := curr[0], curr[1]
@@ -26,6 +29,7 @@ func main() {
 	fmt.Printf("Firmware number: %s ", firmwareNumber)
 	rollbar.Message(rollbar.INFO, "Firmware number: " + firmwareNumber)
 	if firmwareNumber != oldFirmwareNumber || *force {
+		rollbar.Message(rollbar.INFO, "Found new firmware: " + string(firmwareNumber))
 		fmt.Printf("(new)")
 		link := getFirmwareLink(string(establishConnection(firmwareSiteLink)))
 		ioutil.WriteFile(firmwareNumber+".bin", establishConnection(link), 0644)
@@ -37,6 +41,7 @@ func main() {
 	rollupSiteLink, rollupNumber := baseURL+rollup[0], rollup[1]
 	fmt.Printf("Rollup number: %s ", rollupNumber)
 	if rollupNumber != oldRollupNumber || *force {
+		rollbar.Message(rollbar.INFO, "Found new rollup: " + string(rollupNumber))
 		fmt.Printf("(new)")
 		link := getRollupLink(string(establishConnection(rollupSiteLink)))
 		ioutil.WriteFile(rollupNumber+".bin", establishConnection(link), 0644)
@@ -55,12 +60,14 @@ func getFirmwareAndRollup(html string) ([]string, []string) {
 		return matches[1], matches[2]
 	}
 
+	rollbar.Message(rollbar.ERR, "No Firmware(and/or) Rollup found")
 	return []string{""}, []string{""}
 }
 
 func getFirmwareLink(html string) string {
 	matches := regexp.MustCompile("http://downloads\\.snom\\.com/fw/snom300-[0-9.]+-SIP-f.bin").FindAllStringSubmatch(html, 10)
 	if len(matches) == 0 {
+		rollbar.Message(rollbar.ERR, "Couldn't find link to download firmware.")
 		return ""
 	}
 
@@ -70,6 +77,7 @@ func getFirmwareLink(html string) string {
 func getRollupLink(html string) string {
 	matches := regexp.MustCompile("http://downloads\\.snom\\.com/fw/mru-preview/snom300-[0-9.]+-SIP-f.bin").FindAllStringSubmatch(html, 10)
 	if len(matches) == 0 {
+		rollbar.Message(rollbar.ERR, "Couldn't find link to download rollup.")
 		return ""
 	}
 

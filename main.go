@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
+	"github.com/heroku/rollbar"
+	"strings"
 )
 
 var force = flag.Bool("force", false, "Force the download.")
 
 func main() {
 	flag.Parse()
+	rollbar.SetToken(readToken("token"))
+
 	curr := readCurrent()
 	oldFirmwareNumber, oldRollupNumber := curr[0], curr[1]
 
@@ -20,6 +24,7 @@ func main() {
 	firmware, rollup := getFirmwareAndRollup(html)
 	firmwareSiteLink, firmwareNumber := baseURL+firmware[0], firmware[1]
 	fmt.Printf("Firmware number: %s ", firmwareNumber)
+	rollbar.Message(rollbar.INFO, "Firmware number: " + firmwareNumber)
 	if firmwareNumber != oldFirmwareNumber || *force {
 		fmt.Printf("(new)")
 		link := getFirmwareLink(string(establishConnection(firmwareSiteLink)))
@@ -69,4 +74,9 @@ func getRollupLink(html string) string {
 	}
 
 	return matches[0][0]
+}
+
+func readToken(filename string) string {
+	str, _ := ioutil.ReadFile(filename)
+	return strings.TrimSpace(string(str))
 }

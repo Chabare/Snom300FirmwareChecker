@@ -14,6 +14,7 @@ var force = flag.Bool("force", false, "Force the download.")
 func main() {
 	flag.Parse()
 	rollbar.SetToken(readToken("token"))
+	rollbar.SetServerRoot("github.com/chabare/Snom300FirmwareChecker")
 	if *force {
 		rollbar.Message(rollbar.WARN, "Forcing download.")
 	}
@@ -51,6 +52,7 @@ func main() {
 	fmt.Println()
 
 	writeCurrent(firmwareNumber, rollupNumber)
+	rollbar.Wait()
 }
 
 func getFirmwareAndRollup(html string) ([]string, []string) {

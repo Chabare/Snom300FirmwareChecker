@@ -11,8 +11,7 @@ func writeCurrent(firmwareNumber, rollupNumber string) {
 	usr, _ := user.Current()
 	homedir := usr.HomeDir
 
-	data := firmwareNumber + "\n"
-	data += rollupNumber
+	data := strings.Join([]string{firmwareNumber, rollupNumber}, "\n")
 
 	ioutil.WriteFile(filepath.Join(homedir, ".snom"), []byte(data), 0644)
 }

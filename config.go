@@ -1,8 +1,8 @@
 package main
 
 import (
-	"os/user"
 	"io/ioutil"
+	"os/user"
 	"path/filepath"
 	"strings"
 )

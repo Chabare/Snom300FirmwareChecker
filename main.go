@@ -25,6 +25,7 @@ func main() {
 		fmt.Printf("(new)")
 		link := getFirmwareLink(string(establishConnection(firmwareSiteLink)))
 		ioutil.WriteFile(firmwareNumber+".bin", establishConnection(link), 0644)
+		defer func(flink string) { fmt.Printf("Firmware link: %s\n", flink) }(link)
 	} else {
 		fmt.Printf("(old)")
 	}
@@ -36,6 +37,7 @@ func main() {
 		fmt.Printf("(new)")
 		link := getRollupLink(string(establishConnection(rollupSiteLink)))
 		ioutil.WriteFile(rollupNumber+".bin", establishConnection(link), 0644)
+		defer func(rlink string) { fmt.Printf("Rollup link: %s\n", rlink) }(link)
 	} else {
 		fmt.Printf("(old)")
 	}

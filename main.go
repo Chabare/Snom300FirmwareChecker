@@ -21,27 +21,25 @@ func main() {
 	firmware, rollup := getFirmwareAndRollup(html)
 	firmwareSiteLink, firmwareNumber := baseURL+firmware[0], firmware[1]
 	fmt.Printf("Firmware number: %s ", firmwareNumber)
+	firmwareLink := getFirmwareLink(string(establishConnection(firmwareSiteLink)))
 	if firmwareNumber != oldFirmwareNumber || *force {
 		fmt.Printf("(new)")
-		link := getFirmwareLink(string(establishConnection(firmwareSiteLink)))
-		ioutil.WriteFile(firmwareNumber+".bin", establishConnection(link), 0644)
-		defer func(flink string) { fmt.Printf("Firmware link: %s\n", flink) }(link)
+		ioutil.WriteFile(firmwareNumber+".bin", establishConnection(firmwareLink), 0644)
 	} else {
 		fmt.Printf("(old)")
 	}
-	fmt.Println()
+	fmt.Printf("\nFirmware link: %s\n", firmwareLink)
 
 	rollupSiteLink, rollupNumber := baseURL+rollup[0], rollup[1]
 	fmt.Printf("Rollup number: %s ", rollupNumber)
+	rollupLink := getRollupLink(string(establishConnection(rollupSiteLink)))
 	if rollupNumber != oldRollupNumber || *force {
 		fmt.Printf("(new)")
-		link := getRollupLink(string(establishConnection(rollupSiteLink)))
-		ioutil.WriteFile(rollupNumber+".bin", establishConnection(link), 0644)
-		defer func(rlink string) { fmt.Printf("Rollup link: %s\n", rlink) }(link)
+		ioutil.WriteFile(rollupNumber+".bin", establishConnection(rollupLink), 0644)
 	} else {
 		fmt.Printf("(old)")
 	}
-	fmt.Println()
+	fmt.Printf("\nRollup link: %s\n", rollupLink)
 
 	writeCurrent(firmwareNumber, rollupNumber)
 }

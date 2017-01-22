@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
-	"strings"
 )
 
 var force = flag.Bool("force", false, "Force the download.")

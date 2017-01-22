@@ -71,8 +71,3 @@ func getRollupLink(html string) string {
 
 	return matches[0][0]
 }
-
-func readToken(filename string) string {
-	str, _ := ioutil.ReadFile(filename)
-	return strings.TrimSpace(string(str))
-}

@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-var force = flag.Bool("force", false, "Force the download.")
+var download = flag.Bool("download", false, "Download the firmware files.")
 
 func main() {
 	flag.Parse()
@@ -21,9 +21,11 @@ func main() {
 	firmwareSiteLink, firmwareNumber := baseURL+firmware[0], firmware[1]
 	fmt.Printf("Firmware number: %s ", firmwareNumber)
 	firmwareLink := getFirmwareLink(string(establishConnection(firmwareSiteLink)))
-	if firmwareNumber != oldFirmwareNumber || *force {
+	if firmwareNumber != oldFirmwareNumber {
 		fmt.Printf("(new)")
-		ioutil.WriteFile(firmwareNumber+".bin", establishConnection(firmwareLink), 0644)
+		if *download {
+		    ioutil.WriteFile(firmwareNumber+".bin", establishConnection(firmwareLink), 0644)
+		}
 	} else {
 		fmt.Printf("(old)")
 	}
@@ -32,9 +34,11 @@ func main() {
 	rollupSiteLink, rollupNumber := baseURL+rollup[0], rollup[1]
 	fmt.Printf("Rollup number: %s ", rollupNumber)
 	rollupLink := getRollupLink(string(establishConnection(rollupSiteLink)))
-	if rollupNumber != oldRollupNumber || *force {
+	if rollupNumber != oldRollupNumber {
 		fmt.Printf("(new)")
-		ioutil.WriteFile(rollupNumber+".bin", establishConnection(rollupLink), 0644)
+		if *download {
+		    ioutil.WriteFile(rollupNumber+".bin", establishConnection(rollupLink), 0644)
+		}
 	} else {
 		fmt.Printf("(old)")
 	}
